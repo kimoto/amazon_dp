@@ -6,5 +6,9 @@ module AmazonDP
     f.adult_auth
     Parser.new.parse_html f.fetch(url_or_asin)
   end
+  def self.logger=(logger)
+    Fetcher.logger = logger
+    Parser.logger = logger
+  end
 end
 
