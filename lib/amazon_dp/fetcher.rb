@@ -8,6 +8,7 @@ require 'logger'
 module AmazonDP
   class Fetcher
     ADULT_AUTH_URL = "http://www.amazon.co.jp/gp/product/black-curtain-redirect.html"
+    CERO_AUTH_URL = "http://www.amazon.co.jp/gp/product/cero-black-curtain-redirect.html"
     PERMALINK_URL = "http://www.amazon.co.jp/gp/product/[ASIN_CODE]?ie=UTF8&redirect=true"
     USER_AGENT = "w3m/0.5.2"
 
@@ -19,6 +20,7 @@ module AmazonDP
     def initialize(opts={})
       @user_agent = opts[:user_agent] ? opts[:user_agent] : USER_AGENT
       @adult_auth_url = opts[:adult_auth_url] ? opts[:adult_auth_url] : ADULT_AUTH_URL
+      @cero_auth_url = opts[:cero_auth_url] ? opts[:cero_auth_url] : CERO_AUTH_URL
       @permalink_url = opts[:permalink_url] ? opts[:permalink_url] : PERMALINK_URL
       @agent = Mechanize.new{ |agent|
         agent.user_agent = @user_agent
@@ -28,7 +30,15 @@ module AmazonDP
     def adult_auth
       @@logger.info "try adult authentication"
       @agent.redirect_ok = false
-      page = @agent.get(@adult_auth_url)
+      @agent.get(@adult_auth_url)
+      @agent.redirect_ok = true
+      @@logger.info "adult authentication done"
+    end
+
+    def cero_auth
+      @@logger.info "try cero authentication"
+      @agent.redirect_ok = false
+      @agent.get(@cero_auth_url)
       @agent.redirect_ok = true
       @@logger.info "adult authentication done"
     end
